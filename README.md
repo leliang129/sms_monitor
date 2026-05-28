@@ -39,16 +39,74 @@ docker run -d \
 
 支持平台：Linux (amd64/arm64), macOS (amd64/arm64), Windows (amd64)
 
-**Linux / macOS:**
+#### 1. 下载并解压
+
 ```bash
-chmod +x sms_monitor_*
-./sms_monitor_linux_amd64
+# Linux amd64
+wget https://github.com/leliang129/sms_monitor/releases/latest/download/sms_monitor_linux_amd64
+chmod +x sms_monitor_linux_amd64
+
+# Linux arm64
+wget https://github.com/leliang129/sms_monitor/releases/latest/download/sms_monitor_linux_arm64
+chmod +x sms_monitor_linux_arm64
+
+# macOS arm64 (Apple Silicon)
+wget https://github.com/leliang129/sms_monitor/releases/latest/download/sms_monitor_darwin_arm64
+chmod +x sms_monitor_darwin_arm64
 ```
 
-**Windows:**
-```cmd
-sms_monitor_windows_amd64.exe
+#### 2. 创建配置文件
+
+```bash
+cp config.example.json config.json
+# 编辑 config.json，填入你的 API Key
 ```
+
+#### 3. 运行
+
+```bash
+# 前台运行
+./sms_monitor_linux_amd64
+
+# 后台运行
+nohup ./sms_monitor_linux_amd64 > sms_monitor.log 2>&1 &
+```
+
+#### 4. 设置开机自启（Linux systemd）
+
+创建服务文件 `/etc/systemd/system/sms-monitor.service`：
+
+```ini
+[Unit]
+Description=HeroSMS Monitor
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/sms_monitor
+ExecStart=/opt/sms_monitor/sms_monitor_linux_amd64
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+启用并启动服务：
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable sms-monitor
+sudo systemctl start sms-monitor
+
+# 查看状态
+sudo systemctl status sms-monitor
+
+# 查看日志
+sudo journalctl -u sms-monitor -f
+```
+
+启动后访问 http://localhost:8080
 
 ### 方式三：从源码编译
 
