@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeroSMS Monitor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+    
+    <aside class="sidebar">
+        <div class="sidebar-logo">Hero<span>SMS</span></div>
+        
+        <nav class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 20V10M12 20V4M6 20V14"></path></svg>
+                实时控制台
+            </a>
+            <a href="#" class="menu-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+                监控设置
+            </a>
+            <a href="#" class="menu-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path></svg>
+                历史日志
+            </a>
+            <a href="#" class="menu-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"></path></svg>
+                通信渠道
+            </a>
+            <a href="#" class="menu-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"></rect><path d="M1 10h22"></path></svg>
+                财务看板
+            </a>
+            <a href="#" class="menu-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
+                系统配置
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <!-- ===== 实时控制台 ===== -->
+        <div class="page active" id="page-dashboard">
+            <section class="dashboard-control-center">
+                <div class="action-bar-line">
+                    <div class="panel-main-title">实时控制台</div>
+                    <div class="horizontal-btn-group">
+                        <button class="btn-capsule btn-capsule-secondary" onclick="refreshDashboard()">刷新页面</button>
+                        <button class="btn-capsule btn-capsule-secondary" onclick="manualCheck()">手动检查</button>
+                        <button class="btn-capsule btn-capsule-primary" onclick="toggleMonitor(this)">启动实时监控</button>
+                    </div>
+                </div>
+                <div class="charts-flex-grid">
+                    <div class="chart-widget-card">
+                        <div class="donut-svg-container">
+                            <svg width="64" height="64" viewBox="0 0 36 36">
+                                <circle class="svg-track-bg" cx="18" cy="18" r="15.915"></circle>
+                                <circle class="svg-progress-bar color-red" stroke-dasharray="100, 100" cx="18" cy="18" r="15.915" id="statusRing"></circle>
+                            </svg>
+                            <div class="donut-inner-text color-red" style="font-size: 11px;" id="statusBadge">STOP</div>
+                        </div>
+                        <div class="chart-meta-info">
+                            <span class="chart-meta-label">运行状态</span>
+                            <span class="chart-meta-desc" id="statusText">已停止运行</span>
+                        </div>
+                    </div>
+                    <div class="chart-widget-card">
+                        <div class="donut-svg-container">
+                            <svg width="64" height="64" viewBox="0 0 36 36">
+                                <circle class="svg-track-bg" cx="18" cy="18" r="15.915"></circle>
+                                <circle class="svg-progress-bar color-green" stroke-dasharray="40, 100" cx="18" cy="18" r="15.915"></circle>
+                            </svg>
+                            <div class="donut-inner-text color-green" style="font-size: 12px; font-weight:700;" id="balanceValue">$0.00</div>
+                        </div>
+                        <div class="chart-meta-info">
+                            <span class="chart-meta-label">当前账户余额</span>
+                            <span class="chart-meta-desc text-green" id="balanceText">$0.000</span>
+                        </div>
+                    </div>
+                    <div class="chart-widget-card">
+                        <div class="donut-svg-container">
+                            <svg width="64" height="64" viewBox="0 0 36 36">
+                                <circle class="svg-track-bg" cx="18" cy="18" r="15.915"></circle>
+                                <circle class="svg-progress-bar color-blue" stroke-dasharray="85, 100" cx="18" cy="18" r="15.915"></circle>
+                            </svg>
+                            <div class="donut-inner-text color-blue" id="countryCount">0</div>
+                        </div>
+                        <div class="chart-meta-info">
+                            <span class="chart-meta-label">可用国家库</span>
+                            <span class="chart-meta-desc">库存极充足</span>
+                        </div>
+                    </div>
+                    <div class="chart-widget-card">
+                        <div class="donut-svg-container">
+                            <svg width="64" height="64" viewBox="0 0 36 36">
+                                <circle class="svg-track-bg" cx="18" cy="18" r="15.915"></circle>
+                                <circle class="svg-progress-bar color-green" stroke-dasharray="20, 100" cx="18" cy="18" r="15.915"></circle>
+                            </svg>
+                            <div class="donut-inner-text" id="totalHits">0</div>
+                        </div>
+                        <div class="chart-meta-info">
+                            <span class="chart-meta-label">总命中历史</span>
+                            <span class="chart-meta-desc">数据已捕获</span>
+                        </div>
+                        <div class="time-stamp-anchor">
+                            <span class="chart-meta-label" style="margin-bottom: 2px;">上次轮询</span>
+                            <span style="font-size: 12px; font-weight:700; color:#636366; font-family:monospace;" id="lastCheck">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="content-panel panel-table">
+                <div class="panel-header">
+                    <span class="panel-title">最近命中记录</span>
+                </div>
+                <div class="scroll-area">
+                    <div id="hitsContainer">
+                        <div class="empty-state">
+                            <div class="empty-dot">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"></path></svg>
+                            </div>
+                            <span>等待任务开启，暂无历史数据</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===== 监控设置 ===== -->
+        <div class="page" id="page-watchlist">
+            <header class="top-bar">
+                <div class="page-title">监控设置</div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showAddWatchModal()">添加监控项</button>
+                </div>
+            </header>
+            <section class="content-panel" style="flex:1;">
+                <div class="panel-header">
+                    <span class="panel-title">监控列表</span>
+                </div>
+                <div class="scroll-area">
+                    <div id="watchlistContainer">
+                        <div class="empty-state">
+                            <div class="empty-dot">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+                            </div>
+                            <span>暂无监控项</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===== 历史日志 ===== -->
+        <div class="page" id="page-logs">
+            <header class="top-bar">
+                <div class="page-title">历史日志</div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="refreshLogs()">刷新</button>
+                    <button class="btn btn-secondary" onclick="exportLogs()">导出 CSV</button>
+                </div>
+            </header>
+            <section class="content-panel" style="flex:1;">
+                <div class="panel-header">
+                    <span class="panel-title">运行日志</span>
+                </div>
+                <div class="scroll-area">
+                    <div id="logsContainer">
+                        <div class="empty-state">
+                            <div class="empty-dot">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path></svg>
+                            </div>
+                            <span>暂无日志</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===== 通信渠道 ===== -->
+        <div class="page" id="page-channels">
+            <header class="top-bar">
+                <div class="page-title">通信渠道</div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showAddChannelModal()">添加渠道</button>
+                </div>
+            </header>
+            <section class="content-panel" style="flex:1;">
+                <div class="panel-header">
+                    <span class="panel-title">渠道列表</span>
+                </div>
+                <div class="scroll-area">
+                    <div id="channelsContainer">
+                        <div class="empty-state">
+                            <div class="empty-dot">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"></path></svg>
+                            </div>
+                            <span>暂无通知渠道</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===== 财务看板 ===== -->
+        <div class="page" id="page-finance">
+            <header class="top-bar">
+                <div class="page-title">财务看板</div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="refreshFinance()">刷新</button>
+                </div>
+            </header>
+            <div class="finance-dashboard-grid">
+                <div class="finance-chart-card">
+                    <div class="finance-donut-wrapper">
+                        <svg width="72" height="72" viewBox="0 0 36 36">
+                            <circle class="svg-base-track" cx="18" cy="18" r="15.915"></circle>
+                            <circle class="svg-active-progress color-finance-green" stroke-dasharray="38.5, 100" cx="18" cy="18" r="15.915" id="finBalanceRing"></circle>
+                        </svg>
+                        <div class="donut-percentage-text" id="finBalancePercent">38.5%</div>
+                    </div>
+                    <div class="finance-meta-info">
+                        <span class="finance-meta-label">账户余额</span>
+                        <span class="finance-meta-value" style="color: #34c759;" id="finBalance">$0.000</span>
+                    </div>
+                </div>
+                <div class="finance-chart-card">
+                    <div class="finance-donut-wrapper">
+                        <svg width="72" height="72" viewBox="0 0 36 36">
+                            <circle class="svg-base-track" cx="18" cy="18" r="15.915"></circle>
+                            <circle class="svg-active-progress color-finance-orange" stroke-dasharray="0, 100" cx="18" cy="18" r="15.915" id="finCostRing"></circle>
+                        </svg>
+                        <div class="donut-percentage-text" id="finTotalCostPercent">0%</div>
+                    </div>
+                    <div class="finance-meta-info">
+                        <span class="finance-meta-label">累计消耗</span>
+                        <span class="finance-meta-value" id="finTotalCost">$0.000</span>
+                    </div>
+                </div>
+                <div class="finance-chart-card">
+                    <div class="finance-donut-wrapper">
+                        <svg width="72" height="72" viewBox="0 0 36 36">
+                            <circle class="svg-base-track" cx="18" cy="18" r="15.915"></circle>
+                            <circle class="svg-active-progress color-finance-blue" stroke-dasharray="0, 100" cx="18" cy="18" r="15.915" id="finWatchRing"></circle>
+                        </svg>
+                        <div class="donut-percentage-text" id="finWatchCount">0</div>
+                    </div>
+                    <div class="finance-meta-info">
+                        <span class="finance-meta-label">监控项数量</span>
+                        <span class="finance-meta-value" style="color: #0071e3;" id="finWatchCountText">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="finance-detail-card">
+                <div class="finance-card-title">服务消耗明细</div>
+                <div id="financeContainer">
+                    <div class="empty-state">
+                        <div class="empty-dot">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2"></rect><path d="M1 10h22"></path></svg>
+                        </div>
+                        <span>暂无消耗数据</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 系统配置 ===== -->
+        <div class="page" id="page-config">
+            <header class="top-bar">
+                <div class="page-title">系统配置</div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveConfig()">保存配置</button>
+                </div>
+            </header>
+            <div class="config-layout-wrapper">
+                <form class="config-main-form-panel" onsubmit="return false;">
+                    <div class="config-section-title">基础配置</div>
+                    <div class="config-form-grid">
+                        <div class="form-field-group">
+                            <label>API Key</label>
+                            <input type="password" id="cfgApiKey" class="premium-input-box" placeholder="请输入您的 API 密钥">
+                        </div>
+                        <div class="form-field-group">
+                            <label>检查间隔 (秒)</label>
+                            <input type="number" id="cfgInterval" class="premium-input-box" placeholder="通常建议 5~60 秒">
+                        </div>
+                        <div class="form-field-group field-full-width">
+                            <label>Base URL</label>
+                            <input type="url" id="cfgBaseUrl" class="premium-input-box" placeholder="系统回调接口端点">
+                        </div>
+                        <div class="form-field-group field-full-width">
+                            <label>代理地址 <span style="font-size: 11px; font-weight: 500; color: #afafb6;">(可选)</span></label>
+                            <input type="text" id="cfgProxy" class="premium-input-box" placeholder="例如 http://127.0.0.1:7890">
+                        </div>
+                    </div>
+                </form>
+                <div class="config-side-status-panel">
+                    <div class="config-section-title" style="border-left-color: #34c759; margin-bottom: 8px;">配置诊断</div>
+                    <div class="status-mini-card">
+                        <div class="status-card-info">
+                            <span class="status-card-title">API 鉴权状态</span>
+                            <span class="status-card-desc" style="color: #34c759;" id="cfgApiStatus">检测中...</span>
+                        </div>
+                        <span class="pulse-indicator pulse-green" id="cfgApiPulse"></span>
+                    </div>
+                    <div class="status-mini-card">
+                        <div class="status-card-info">
+                            <span class="status-card-title">网络代理连接</span>
+                            <span class="status-card-desc" id="cfgProxyStatus">检测中...</span>
+                        </div>
+                        <span style="font-size: 14px; color: #86868b;" id="cfgProxyIcon">—</span>
+                    </div>
+                    <div class="status-mini-card">
+                        <div class="status-card-info">
+                            <span class="status-card-title">最后配置同步</span>
+                            <span class="status-card-desc" style="font-family: monospace; font-size: 12px; color: #636366;" id="cfgLastSync">--</span>
+                        </div>
+                        <span style="color: #0071e3;" id="cfgSyncIcon">✓</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- 精美弹窗 -->
+<div class="hero-alert-mask" id="heroAlert">
+    <div class="hero-alert-card">
+        <div class="hero-alert-icon-wrapper">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        <div class="hero-alert-message" id="heroAlertMsg">配置已保存</div>
+        <button class="hero-alert-btn" onclick="closeHeroAlert()">确定</button>
+    </div>
+</div>
+
+<!-- 添加渠道模态框 -->
+<div id="addChannelModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:20px; padding:28px; width:450px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+            <h3 style="margin:0; font-size:18px; font-weight:800;">添加通知渠道</h3>
+            <button onclick="closeAddChannelModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#86868b;">&times;</button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <div>
+                <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">渠道名称</label>
+                <input type="text" id="channelName" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" placeholder="例如：飞书机器人">
+            </div>
+            <div>
+                <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">渠道类型</label>
+                <div class="custom-select-wrapper">
+                    <div class="custom-select-trigger" id="channelTypeTrigger" onclick="toggleCustomSelect('channelType')">
+                        <span class="placeholder">选择类型...</span>
+                    </div>
+                    <div class="custom-select-dropdown" id="channelTypeDropdown">
+                        <div class="custom-select-options" id="channelTypeOptions"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="channelConfigSection">
+                <!-- 根据类型动态显示配置项 -->
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:24px; justify-content:flex-end;">
+            <button onclick="closeAddChannelModal()" style="padding:10px 20px; border-radius:50px; border:none; background:#f5f5f7; font-size:13px; font-weight:700; cursor:pointer;">取消</button>
+            <button onclick="submitAddChannel()" style="padding:10px 20px; border-radius:50px; border:none; background:#0071e3; color:#fff; font-size:13px; font-weight:700; cursor:pointer;">确认添加</button>
+        </div>
+    </div>
+</div>
+
+<!-- 添加监控项模态框 -->
+<div id="addWatchModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:20px; padding:28px; width:420px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+            <h3 style="margin:0; font-size:18px; font-weight:800;">添加监控项</h3>
+            <button onclick="closeAddWatchModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#86868b;">&times;</button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="custom-select-wrapper">
+                <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">服务</label>
+                <div class="custom-select-trigger" id="serviceSelectTrigger" onclick="toggleCustomSelect('service')">
+                    <span class="placeholder">选择服务...</span>
+                </div>
+                <div class="custom-select-dropdown" id="serviceDropdown">
+                    <div class="custom-select-search">
+                        <input type="text" placeholder="搜索服务..." oninput="filterOptions('service', this.value)">
+                    </div>
+                    <div class="custom-select-options" id="serviceOptions"></div>
+                </div>
+            </div>
+            <div class="custom-select-wrapper">
+                <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">国家</label>
+                <div class="custom-select-trigger" id="countrySelectTrigger" onclick="toggleCustomSelect('country')">
+                    <span class="placeholder">选择国家...</span>
+                </div>
+                <div class="custom-select-dropdown" id="countryDropdown">
+                    <div class="custom-select-search">
+                        <input type="text" placeholder="搜索国家..." oninput="filterOptions('country', this.value)">
+                    </div>
+                    <div class="custom-select-options" id="countryOptions"></div>
+                </div>
+            </div>
+            <div>
+                <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">最高价格 ($)</label>
+                <input type="number" id="watchMaxPrice" step="0.01" min="0" value="0.03" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;">
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:24px; justify-content:flex-end;">
+            <button onclick="closeAddWatchModal()" style="padding:10px 20px; border-radius:50px; border:none; background:#f5f5f7; font-size:13px; font-weight:700; cursor:pointer;">取消</button>
+            <button onclick="submitAddWatch()" style="padding:10px 20px; border-radius:50px; border:none; background:#0071e3; color:#fff; font-size:13px; font-weight:700; cursor:pointer;">确认添加</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_BASE = '';
+
+async function fetchJSON(url, options = {}) {
+    const res = await fetch(API_BASE + url, options);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+}
+
+// ========== 精美弹窗 ==========
+function showHeroAlert(msg = "操作成功") {
+    const mask = document.getElementById('heroAlert');
+    const msgContainer = document.getElementById('heroAlertMsg');
+    msgContainer.innerText = msg;
+    mask.classList.add('is-visible');
+    window.heroAlertTimer = setTimeout(closeHeroAlert, 3500);
+}
+
+function closeHeroAlert() {
+    const mask = document.getElementById('heroAlert');
+    mask.classList.remove('is-visible');
+    if (window.heroAlertTimer) clearTimeout(window.heroAlertTimer);
+}
+
+// 页面切换
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    localStorage.setItem('currentPage', pageId);
+}
+
+// ========== 实时控制台 ==========
+async function refreshDashboard() {
+    try {
+        const data = await fetchJSON('/api/dashboard');
+        const statusBadge = document.getElementById('statusBadge');
+        const statusRing = document.getElementById('statusRing');
+        const statusText = document.getElementById('statusText');
+        const monitorBtn = document.querySelector('.btn-capsule-primary');
+
+        if (data.status?.running) {
+            statusBadge.textContent = 'RUN';
+            statusBadge.setAttribute('class', 'donut-inner-text color-green');
+            statusRing.setAttribute('class', 'svg-progress-bar color-green');
+            statusText.textContent = '运行中';
+            if (monitorBtn) monitorBtn.textContent = '停止监控';
+        } else {
+            statusBadge.textContent = 'STOP';
+            statusBadge.setAttribute('class', 'donut-inner-text color-red');
+            statusRing.setAttribute('class', 'svg-progress-bar color-red');
+            statusText.textContent = '已停止运行';
+            if (monitorBtn) monitorBtn.textContent = '启动实时监控';
+        }
+        document.getElementById('balanceValue').textContent = '$' + (data.status?.balance || 0).toFixed(2);
+        document.getElementById('balanceText').textContent = '$' + (data.status?.balance || 0).toFixed(3);
+        document.getElementById('countryCount').textContent = data.status?.country_count || 0;
+        document.getElementById('totalHits').textContent = data.status?.total_hits || 0;
+        const lastCheck = data.status?.last_check;
+        document.getElementById('lastCheck').textContent = lastCheck ? new Date(lastCheck).toLocaleTimeString() : '--';
+        renderHits(data.recent_hits || []);
+    } catch (e) {
+        console.error('刷新失败:', e);
+    }
+}
+
+function renderHits(hits) {
+    const container = document.getElementById('hitsContainer');
+    if (!hits.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-dot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"></path></svg></div><span>等待任务开启，暂无历史数据</span></div>';
+        return;
+    }
+    let html = '<table style="width:100%; border-collapse:collapse;"><thead><tr style="border-bottom:1px solid #e5e5ea; text-align:left;">';
+    html += '<th style="padding:12px 8px; font-size:12px; color:#86868b;">时间</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">国家</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">服务</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">号码</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">状态</th></tr></thead><tbody>';
+    for (const hit of hits) {
+        const time = new Date(hit.timestamp).toLocaleString();
+        html += `<tr style="border-bottom:1px solid #f5f5f7;"><td style="padding:12px 8px; font-size:13px;">${time}</td><td style="padding:12px 8px; font-size:13px;">${hit.country_name || '-'}</td><td style="padding:12px 8px; font-size:13px;">${hit.service_name || '-'}</td><td style="padding:12px 8px; font-size:13px; font-family:monospace;">${hit.phone_number || '-'}</td><td style="padding:12px 8px; font-size:13px;"><span class="pill-badge pill-success">已命中</span></td></tr>`;
+    }
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+async function toggleMonitor(btn) {
+    const statusEl = document.getElementById('statusBadge');
+    const isRunning = statusEl.textContent === 'RUN';
+    try {
+        if (isRunning) {
+            await fetchJSON('/api/monitor/stop', { method: 'POST' });
+        } else {
+            await fetchJSON('/api/monitor/start', { method: 'POST' });
+        }
+        setTimeout(refreshDashboard, 500);
+    } catch (e) {
+        showHeroAlert('操作失败: ' + e.message);
+    }
+}
+
+async function manualCheck() {
+    try {
+        const data = await fetchJSON('/api/check', { method: 'POST' });
+        showHeroAlert(`手动检查完成，命中 ${data.count} 条`);
+        refreshDashboard();
+    } catch (e) {
+        showHeroAlert('检查失败: ' + e.message);
+    }
+}
+
+// ========== 监控设置 ==========
+async function refreshWatchlist() {
+    try {
+        const items = await fetchJSON('/api/watchlist');
+        const container = document.getElementById('watchlistContainer');
+        if (!items.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-dot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg></div><span>暂无监控项</span></div>';
+            return;
+        }
+        let html = '<table style="width:100%; border-collapse:collapse;"><thead><tr style="border-bottom:1px solid #e5e5ea; text-align:left;">';
+        html += '<th style="padding:12px 8px; font-size:12px; color:#86868b;">国家</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">服务</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">最高价格</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">状态</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">操作</th></tr></thead><tbody>';
+        for (const item of items) {
+            const statusBadge = item.enabled ? '<span class="pill-badge pill-success">启用</span>' : '<span class="pill-badge pill-danger">禁用</span>';
+            html += `<tr style="border-bottom:1px solid #f5f5f7;"><td style="padding:12px 8px; font-size:13px;">${item.country_name || '-'}</td><td style="padding:12px 8px; font-size:13px;">${item.service_name || '-'}</td><td style="padding:12px 8px; font-size:13px;">$${item.max_price || 0}</td><td style="padding:12px 8px; font-size:13px;">${statusBadge}</td><td style="padding:12px 8px; font-size:13px;"><button onclick="deleteWatchItem('${item.id}')" style="background:none; border:none; color:#ff3b30; cursor:pointer; font-size:13px;">删除</button></td></tr>`;
+        }
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    } catch (e) {
+        console.error('加载监控列表失败:', e);
+    }
+}
+
+// ========== 自定义下拉选择 ==========
+const customSelectData = {
+    service: { options: [], selected: null },
+    country: { options: [], selected: null },
+    channelType: { options: [], selected: null }
+};
+
+function showAddWatchModal() {
+    document.getElementById('addWatchModal').style.display = 'flex';
+    loadServicesAndCountries();
+}
+
+function closeAddWatchModal() {
+    document.getElementById('addWatchModal').style.display = 'none';
+    customSelectData.service.selected = null;
+    customSelectData.country.selected = null;
+    resetCustomSelect('service');
+    resetCustomSelect('country');
+}
+
+function resetCustomSelect(type) {
+    const trigger = document.getElementById(`${type}SelectTrigger`) || document.getElementById(`${type}Trigger`);
+    const placeholders = { service: '选择服务...', country: '选择国家...', channelType: '选择类型...' };
+    trigger.innerHTML = `<span class="placeholder">${placeholders[type] || '请选择...'}</span>`;
+    trigger.classList.remove('open');
+    document.getElementById(`${type}Dropdown`).classList.remove('open');
+    const searchInput = document.querySelector(`#${type}Dropdown .custom-select-search input`);
+    if (searchInput) searchInput.value = '';
+}
+
+function toggleCustomSelect(type) {
+    const dropdown = document.getElementById(`${type}Dropdown`);
+    const trigger = document.getElementById(`${type}SelectTrigger`) || document.getElementById(`${type}Trigger`);
+    const isOpen = dropdown.classList.contains('open');
+
+    document.querySelectorAll('.custom-select-dropdown').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.custom-select-trigger').forEach(t => t.classList.remove('open'));
+
+    if (!isOpen) {
+        dropdown.classList.add('open');
+        trigger.classList.add('open');
+        const searchInput = dropdown.querySelector('.custom-select-search input');
+        if (searchInput) {
+            searchInput.value = '';
+            filterOptions(type, '');
+            setTimeout(() => searchInput.focus(), 50);
+        }
+    }
+}
+
+function renderCustomOptions(type) {
+    const container = document.getElementById(`${type}Options`);
+    const data = customSelectData[type];
+    const checkSvg = '<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="#0071e3" stroke-width="3"><path d="M5 13l4 4L19 7"></path></svg>';
+
+    if (!data.options.length) {
+        container.innerHTML = '<div class="custom-select-no-results">暂无数据</div>';
+        return;
+    }
+
+    container.innerHTML = data.options.map(opt =>
+        `<div class="custom-select-option${data.selected === opt.value ? ' selected' : ''}" data-value="${opt.value}" onclick="selectCustomOption('${type}', '${opt.value}', '${opt.label.replace(/'/g, "\\'")}')">
+            <span>${opt.label}</span>
+            ${checkSvg}
+        </div>`
+    ).join('');
+}
+
+function filterOptions(type, keyword) {
+    const container = document.getElementById(`${type}Options`);
+    const data = customSelectData[type];
+    const checkSvg = '<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="#0071e3" stroke-width="3"><path d="M5 13l4 4L19 7"></path></svg>';
+    const filtered = data.options.filter(opt => opt.label.toLowerCase().includes(keyword.toLowerCase()));
+
+    if (!filtered.length) {
+        container.innerHTML = '<div class="custom-select-no-results">未找到匹配项</div>';
+        return;
+    }
+
+    container.innerHTML = filtered.map(opt =>
+        `<div class="custom-select-option${data.selected === opt.value ? ' selected' : ''}" data-value="${opt.value}" onclick="selectCustomOption('${type}', '${opt.value}', '${opt.label.replace(/'/g, "\\'")}')">
+            <span>${opt.label}</span>
+            ${checkSvg}
+        </div>`
+    ).join('');
+}
+
+function selectCustomOption(type, value, label) {
+    customSelectData[type].selected = value;
+    const trigger = document.getElementById(`${type}SelectTrigger`) || document.getElementById(`${type}Trigger`);
+    trigger.innerHTML = `<span>${label}</span>`;
+    trigger.classList.remove('open');
+    document.getElementById(`${type}Dropdown`).classList.remove('open');
+}
+
+async function loadServicesAndCountries() {
+    try {
+        const [services, countries] = await Promise.all([
+            fetchJSON('/api/services'),
+            fetchJSON('/api/countries')
+        ]);
+
+        customSelectData.service.options = Object.entries(services).map(([key, name]) => ({
+            value: key,
+            label: name
+        }));
+        customSelectData.country.options = Object.entries(countries)
+            .filter(([id, c]) => c.visible === 1)
+            .map(([id, c]) => ({
+                value: c.id,
+                label: c.chn || c.eng || id
+            }));
+
+        renderCustomOptions('service');
+        renderCustomOptions('country');
+    } catch (e) {
+        console.error('加载数据失败:', e);
+    }
+}
+
+async function submitAddWatch() {
+    const service = customSelectData.service.selected;
+    const country = customSelectData.country.selected;
+    const maxPrice = parseFloat(document.getElementById('watchMaxPrice').value) || 0;
+    if (!service || !country) {
+        showHeroAlert('请选择服务和国家');
+        return;
+    }
+    const serviceOpt = customSelectData.service.options.find(o => o.value === service);
+    const countryOpt = customSelectData.country.options.find(o => o.value == country);
+    try {
+        await fetchJSON('/api/watchlist/add', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                service: service,
+                service_name: serviceOpt ? serviceOpt.label : service,
+                country: parseInt(country),
+                country_name: countryOpt ? countryOpt.label : country,
+                max_price: maxPrice
+            })
+        });
+        closeAddWatchModal();
+        refreshWatchlist();
+    } catch (e) {
+        alert('添加失败: ' + e.message);
+    }
+}
+
+async function deleteWatchItem(id) {
+    if (!confirm('确定删除该监控项？')) return;
+    try {
+        await fetchJSON('/api/watchlist/delete', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id}) });
+        refreshWatchlist();
+    } catch (e) {
+        alert('删除失败: ' + e.message);
+    }
+}
+
+// ========== 历史日志 ==========
+async function refreshLogs() {
+    try {
+        const logs = await fetchJSON('/api/logs?limit=100');
+        const container = document.getElementById('logsContainer');
+        if (!logs.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-dot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path></svg></div><span>暂无日志</span></div>';
+            return;
+        }
+        let html = '';
+        for (const log of logs) {
+            const time = new Date(log.timestamp).toLocaleString();
+            const color = log.level === 'error' ? '#ff3b30' : log.level === 'hit' ? '#34c759' : '#86868b';
+            html += `<div style="padding:10px 8px; border-bottom:1px solid #f5f5f7; font-size:13px; font-family:monospace;">`;
+            html += `<span style="color:#86868b; margin-right:12px;">[${time}]</span>`;
+            html += `<span style="color:${color}; font-weight:600; margin-right:8px;">${log.level?.toUpperCase()}</span>`;
+            html += `<span>${log.message}</span>`;
+            html += `</div>`;
+        }
+        container.innerHTML = html;
+    } catch (e) {
+        console.error('加载日志失败:', e);
+    }
+}
+
+function exportLogs() {
+    window.open('/api/logs/export', '_blank');
+}
+
+// ========== 通信渠道 ==========
+async function refreshChannels() {
+    try {
+        const channels = await fetchJSON('/api/channels');
+        const container = document.getElementById('channelsContainer');
+        if (!channels.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-dot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"></path></svg></div><span>暂无通知渠道</span></div>';
+            return;
+        }
+        let html = '<table style="width:100%; border-collapse:collapse;"><thead><tr style="border-bottom:1px solid #e5e5ea; text-align:left;">';
+        html += '<th style="padding:12px 8px; font-size:12px; color:#86868b;">名称</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">类型</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">状态</th><th style="padding:12px 8px; font-size:12px; color:#86868b;">操作</th></tr></thead><tbody>';
+        for (const ch of channels) {
+            const statusBadge = ch.enabled ? '<span class="pill-badge pill-success">启用</span>' : '<span class="pill-badge pill-danger">禁用</span>';
+            const typeMap = { feishu: '飞书', dingtalk: '钉钉', wechat: '企业微信', telegram: 'Telegram', email: '邮件' };
+            html += `<tr style="border-bottom:1px solid #f5f5f7;"><td style="padding:12px 8px; font-size:13px;">${ch.name || '-'}</td><td style="padding:12px 8px; font-size:13px;">${typeMap[ch.type] || ch.type}</td><td style="padding:12px 8px; font-size:13px;">${statusBadge}</td><td style="padding:12px 8px; font-size:13px;"><button onclick="deleteChannel('${ch.id}')" style="background:none; border:none; color:#ff3b30; cursor:pointer; font-size:13px;">删除</button></td></tr>`;
+        }
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    } catch (e) {
+        console.error('加载渠道失败:', e);
+    }
+}
+
+function showAddChannelModal() {
+    document.getElementById('addChannelModal').style.display = 'flex';
+    initChannelTypeSelect();
+}
+
+function closeAddChannelModal() {
+    document.getElementById('addChannelModal').style.display = 'none';
+    document.getElementById('channelName').value = '';
+    document.getElementById('channelConfigSection').innerHTML = '';
+    customSelectData.channelType.selected = null;
+    resetCustomSelect('channelType');
+}
+
+function initChannelTypeSelect() {
+    customSelectData.channelType = {
+        options: [
+            { value: 'feishu', label: '飞书' },
+            { value: 'dingtalk', label: '钉钉' },
+            { value: 'wechat', label: '企业微信' },
+            { value: 'telegram', label: 'Telegram' },
+            { value: 'email', label: '邮件' }
+        ],
+        selected: null
+    };
+    renderCustomOptions('channelType');
+}
+
+function selectCustomOption(type, value, label) {
+    customSelectData[type].selected = value;
+    const trigger = document.getElementById(`${type}Trigger`);
+    trigger.innerHTML = `<span>${label}</span>`;
+    trigger.classList.remove('open');
+    document.getElementById(`${type}Dropdown`).classList.remove('open');
+
+    if (type === 'channelType') {
+        renderChannelConfig(value);
+    }
+}
+
+function renderChannelConfig(type) {
+    const container = document.getElementById('channelConfigSection');
+    let html = '';
+    switch (type) {
+        case 'feishu':
+        case 'dingtalk':
+        case 'wechat':
+            html = `
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">Webhook URL</label>
+                    <input type="text" id="channelWebhook" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" placeholder="输入 Webhook 地址">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">签名密钥（可选）</label>
+                    <input type="text" id="channelSign" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" placeholder="输入签名密钥">
+                </div>`;
+            break;
+        case 'telegram':
+            html = `
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">Bot Token</label>
+                    <input type="text" id="channelBotToken" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" placeholder="输入 Bot Token">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">Chat ID</label>
+                    <input type="text" id="channelChatId" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" placeholder="输入 Chat ID">
+                </div>`;
+            break;
+        case 'email':
+            html = `
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">SMTP 服务器</label>
+                    <input type="text" id="channelSmtpHost" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" placeholder="例如：smtp.gmail.com">
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">端口</label>
+                        <input type="number" id="channelSmtpPort" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" value="587">
+                    </div>
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">用户名</label>
+                    <input type="text" id="channelSmtpUser" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" placeholder="输入邮箱账号">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">密码</label>
+                    <input type="password" id="channelSmtpPass" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" placeholder="输入密码或应用密码">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#86868b; margin-bottom:6px; display:block;">收件人邮箱</label>
+                    <input type="email" id="channelToEmail" style="width:100%; padding:10px 14px; border:1px solid #e5e5ea; border-radius:10px; font-size:14px; outline:none;" placeholder="输入收件人邮箱">
+                </div>`;
+            break;
+    }
+    container.innerHTML = html;
+}
+
+async function submitAddChannel() {
+    const name = document.getElementById('channelName').value.trim();
+    const type = customSelectData.channelType.selected;
+    if (!name || !type) {
+        showHeroAlert('请填写渠道名称并选择类型');
+        return;
+    }
+    const channel = { name, type, enabled: true, config: {}, policies: [{ event: 'hit', level: 'normal', enabled: true }] };
+    switch (type) {
+        case 'feishu':
+        case 'dingtalk':
+        case 'wechat':
+            channel.config.webhook_url = document.getElementById('channelWebhook')?.value || '';
+            channel.config.sign = document.getElementById('channelSign')?.value || '';
+            break;
+        case 'telegram':
+            channel.config.bot_token = document.getElementById('channelBotToken')?.value || '';
+            channel.config.chat_id = document.getElementById('channelChatId')?.value || '';
+            break;
+        case 'email':
+            channel.config.smtp_host = document.getElementById('channelSmtpHost')?.value || '';
+            channel.config.smtp_port = parseInt(document.getElementById('channelSmtpPort')?.value) || 587;
+            channel.config.smtp_user = document.getElementById('channelSmtpUser')?.value || '';
+            channel.config.smtp_pass = document.getElementById('channelSmtpPass')?.value || '';
+            channel.config.to_email = document.getElementById('channelToEmail')?.value || '';
+            break;
+    }
+    try {
+        await fetchJSON('/api/channels/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(channel)
+        });
+        closeAddChannelModal();
+        refreshChannels();
+    } catch (e) {
+        alert('添加失败: ' + e.message);
+    }
+}
+
+async function deleteChannel(id) {
+    if (!confirm('确定删除该渠道？')) return;
+    try {
+        await fetchJSON('/api/channels/delete', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id}) });
+        refreshChannels();
+    } catch (e) {
+        alert('删除失败: ' + e.message);
+    }
+}
+
+// ========== 财务看板 ==========
+async function refreshFinance() {
+    try {
+        const [financeData, hitsData] = await Promise.all([
+            fetchJSON('/api/finance?days=30'),
+            fetchJSON('/api/hits?limit=50')
+        ]);
+
+        const balance = financeData.balance || 0;
+        const totalCost = financeData.total_cost || 0;
+        const watchCount = Object.keys(financeData.service_costs || {}).length;
+        const maxBalance = 10;
+
+        const balancePercent = Math.min((balance / maxBalance) * 100, 100);
+        const costPercent = totalCost > 0 ? Math.min((totalCost / balance) * 100, 100) : 0;
+
+        document.getElementById('finBalance').textContent = '$' + balance.toFixed(3);
+        document.getElementById('finBalancePercent').textContent = balancePercent.toFixed(1) + '%';
+        document.getElementById('finBalanceRing').setAttribute('stroke-dasharray', balancePercent + ', 100');
+
+        document.getElementById('finTotalCost').textContent = '$' + totalCost.toFixed(3);
+        document.getElementById('finTotalCostPercent').textContent = costPercent.toFixed(1) + '%';
+        document.getElementById('finCostRing').setAttribute('stroke-dasharray', costPercent + ', 100');
+
+        document.getElementById('finWatchCount').textContent = watchCount;
+        document.getElementById('finWatchCountText').textContent = watchCount;
+        document.getElementById('finWatchRing').setAttribute('stroke-dasharray', (watchCount * 10) + ', 100');
+
+        const container = document.getElementById('financeContainer');
+        if (!hitsData.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-dot"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d2d2d7" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2"></rect><path d="M1 10h22"></path></svg></div><span>暂无消耗数据</span></div>';
+            return;
+        }
+        let html = '<table class="premium-data-table"><thead><tr><th>服务名称</th><th>关联号码</th><th>验证码 (OTP)</th><th>消耗金额</th></tr></thead><tbody>';
+        for (const hit of hitsData) {
+            html += `<tr><td><strong>${hit.service_name || '-'}</strong></td><td class="font-mono">${hit.phone_number || '-'}</td><td><span class="otp-badge font-mono">${hit.sms_code || '-'}</span></td><td class="font-mono text-amount">$${(hit.cost || 0).toFixed(3)}</td></tr>`;
+        }
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    } catch (e) {
+        console.error('加载财务数据失败:', e);
+    }
+}
+
+// ========== 系统配置 ==========
+async function refreshConfig() {
+    try {
+        const cfg = await fetchJSON('/api/config');
+        document.getElementById('cfgApiKey').value = cfg.api_key || '';
+        document.getElementById('cfgBaseUrl').value = cfg.base_url || '';
+        document.getElementById('cfgInterval').value = cfg.interval_seconds || 60;
+        document.getElementById('cfgProxy').value = cfg.proxy?.url || '';
+
+        document.getElementById('cfgApiStatus').textContent = cfg.api_key ? '已配置' : '未配置';
+        document.getElementById('cfgApiPulse').className = cfg.api_key ? 'pulse-indicator pulse-green' : 'pulse-indicator';
+
+        if (cfg.proxy?.url) {
+            document.getElementById('cfgProxyStatus').textContent = cfg.proxy.url;
+            document.getElementById('cfgProxyStatus').style.color = '#0071e3';
+        } else {
+            document.getElementById('cfgProxyStatus').textContent = '直连 (未使用代理)';
+            document.getElementById('cfgProxyStatus').style.color = '#1d1d1f';
+        }
+
+        document.getElementById('cfgLastSync').textContent = new Date().toLocaleString('zh-CN');
+    } catch (e) {
+        console.error('加载配置失败:', e);
+    }
+}
+
+async function saveConfig() {
+    try {
+        const cfg = {
+            api_key: document.getElementById('cfgApiKey').value,
+            base_url: document.getElementById('cfgBaseUrl').value,
+            interval_seconds: parseInt(document.getElementById('cfgInterval').value) || 60,
+            proxy: { enabled: !!document.getElementById('cfgProxy').value, url: document.getElementById('cfgProxy').value }
+        };
+        await fetchJSON('/api/config', { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(cfg) });
+        showHeroAlert('配置已保存');
+    } catch (e) {
+        showHeroAlert('保存失败: ' + e.message);
+    }
+}
+
+// ========== SSE ==========
+function connectSSE() {
+    const es = new EventSource('/api/events');
+    es.addEventListener('status', (e) => {
+        refreshDashboard();
+    });
+    es.addEventListener('hit', () => refreshDashboard());
+    es.addEventListener('log', () => refreshDashboard());
+    es.onerror = () => { es.close(); setTimeout(connectSSE, 5000); };
+}
+
+// ========== 菜单映射 ==========
+const pageMap = {
+    '实时控制台': 'page-dashboard',
+    '监控设置': 'page-watchlist',
+    '历史日志': 'page-logs',
+    '通信渠道': 'page-channels',
+    '财务看板': 'page-finance',
+    '系统配置': 'page-config'
+};
+
+// ========== 初始化 ==========
+document.addEventListener('DOMContentLoaded', () => {
+    connectSSE();
+
+    const savedPage = localStorage.getItem('currentPage') || 'page-dashboard';
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            menuItems.forEach(m => m.classList.remove('active'));
+            this.classList.add('active');
+            const name = this.textContent.trim();
+            const pageId = pageMap[name];
+            if (pageId) {
+                showPage(pageId);
+                if (pageLoaders[pageId]) pageLoaders[pageId]();
+            }
+        });
+    });
+
+    const pageLoaders = {
+        'page-dashboard': refreshDashboard,
+        'page-watchlist': refreshWatchlist,
+        'page-logs': refreshLogs,
+        'page-channels': refreshChannels,
+        'page-finance': refreshFinance,
+        'page-config': refreshConfig
+    };
+
+    let foundMenu = false;
+    menuItems.forEach(item => {
+        const name = item.textContent.trim();
+        const pageId = pageMap[name];
+        if (pageId === savedPage) {
+            menuItems.forEach(m => m.classList.remove('active'));
+            item.classList.add('active');
+            foundMenu = true;
+        }
+    });
+
+    showPage(savedPage);
+    if (pageLoaders[savedPage]) pageLoaders[savedPage]();
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-select-wrapper')) {
+            document.querySelectorAll('.custom-select-dropdown').forEach(d => d.classList.remove('open'));
+            document.querySelectorAll('.custom-select-trigger').forEach(t => t.classList.remove('open'));
+        }
+    });
+});
+</script>
+
+</body>
+</html>
