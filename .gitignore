@@ -9,6 +9,7 @@ heroesms-monitor
 heroesms-monitor-linux
 heroesms-monitor.exe
 sms_monitor
+sms_monitor_*
 
 # Go 构建缓存
 *.exe

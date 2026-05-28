@@ -1,0 +1,21 @@
+{
+  "api_key": "YOUR_HEROSMS_API_KEY",
+  "base_url": "https://hero-sms.com/stubs/handler_api.php",
+  "interval_seconds": 600,
+  "webhook": {
+    "enabled": false,
+    "url": "",
+    "sign": ""
+  },
+  "watchlist": [],
+  "channels": [],
+  "proxy": {
+    "enabled": false,
+    "url": ""
+  },
+  "balance_alert": {
+    "enabled": false,
+    "threshold": 10
+  },
+  "users": []
+}
